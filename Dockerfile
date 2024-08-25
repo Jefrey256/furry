@@ -11,7 +11,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader || true
 
 # Etapa 2: Criar a imagem final
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 # Instalar dependências do sistema e extensões PHP necessárias
 RUN apt-get update && apt-get install -y \
@@ -31,6 +31,8 @@ COPY --from=composer /app /var/www/html
 # Copiar o restante dos arquivos
 COPY . .
 
-# Expor a porta 9000 e iniciar o PHP-FPM
+# Expor a porta 9000
 EXPOSE 9000
-CMD ["php-fpm"]
+
+# Comando para iniciar o Laravel no host 0.0.0.0 na porta 9000
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
